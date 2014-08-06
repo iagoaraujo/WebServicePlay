@@ -2,6 +2,7 @@ package controllers;
 
 import java.util.Map;
 
+import models.Comment;
 import models.Post;
 import models.dao.GenericDAO;
 import models.dao.GenericDAOImpl;
@@ -61,5 +62,80 @@ public class Application extends Controller {
 	
 	public static GenericDAO getDao() {
 		return new GenericDAOImpl();
+	}
+	
+	@Transactional
+	public static Result getAllComments(Long id){
+		Post post = (Post) getDao().findByEntityId(Post.class, id);
+		if(post==null){
+			return notFound("Post nao cadastrado no sistema");
+		}
+		return ok(Json.toJson(post.getComments()));
+	}
+	
+	@Transactional
+	public static Result createComment(Long id){
+		Post post = (Post) getDao().findByEntityId(Post.class, id);
+		if(post==null){
+			return notFound("Post nao cadastrado no sistema");
+		}
+		Map<String, String[]> parametros = Controller.request().body().asFormUrlEncoded();
+		String msg = parametros.get("msg")[0];
+		post.addComment(msg);
+		getDao().merge(post);
+		getDao().flush();
+		return ok();
+	}
+	
+	@Transactional
+	public static Result getCommentById(Long id, Long id2 ){
+		Post post = (Post) getDao().findByEntityId(Post.class, id);
+		if(post==null){
+			return notFound("Post nao cadastrado no sistema");
+		}
+		for(Comment comment: post.getComments()){
+			if(comment.getId().equals(id2)){
+				return ok(Json.toJson(comment));
+			}
+		}
+		
+		return notFound("Comment nao cadastrado no sistema");
+	}
+	
+	@Transactional
+	public static Result deleteComment(Long id, Long id2){
+		Post post = (Post) getDao().findByEntityId(Post.class, id);
+		if(post==null){
+			return notFound("Post nao cadastrado no sistema");
+		}
+		for(Comment comment: post.getComments()){
+			if(comment.getId().equals(id2)){
+				getDao().remove(comment);
+				getDao().flush();
+				return ok();
+			}
+		}
+		return notFound("Comment nao cadastrado no sistema");
+	}
+	
+	@Transactional
+	public static Result editComment(Long id, Long id2){
+		Post post = (Post) getDao().findByEntityId(Post.class, id);
+		if(post==null){
+			return notFound("Post nao cadastrado no sistema");
+		}
+		Map<String, String[]> parametros = Controller.request().body().asFormUrlEncoded();
+		String msg = parametros.get("msg")[0];
+		for(Comment comment: post.getComments()){
+			if(comment.getId().equals(id2)){
+				comment.setMsg(msg);
+				getDao().merge(comment);
+				getDao().flush();
+				return ok(Json.toJson(comment));
+			}
+		}
+		
+		return notFound("Comment nao cadastrado no sistema");
+		
 	}
 }

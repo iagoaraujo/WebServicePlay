@@ -12,4 +12,9 @@ GET     /post/:id				   controllers.Application.getPostById(id: Long)
 PUT     /post/:id				   controllers.Application.editPost(id: Long)
 DELETE  /post/:id				   controllers.Application.deletePost(id: Long)	
 
+GET    /post/:id/comment		  controllers.Application.getAllComments(id: Long)
+POST  /post/:id/comment           controllers.Application.createComment(id: Long)
 
+GET /post/:id/comment/:id2         controllers.Application.getCommentById(id: Long, id2: Long)
+DELETE /post/:id/comment/:id2      controllers.Application.deleteComment(id: Long, id2: Long)
+PUT /post/:id/comment/:id2         controllers.Application.editComment(id: Long, id2: Long)

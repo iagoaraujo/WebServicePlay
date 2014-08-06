@@ -49,7 +49,7 @@ public class Post {
 	}
 
 	public void addComment(String msg) {
-		this.comments.add(new Comment(msg, (long) this.comments.size() + 1));
+		this.comments.add(new Comment(msg));
 	}
 
 	public List<Comment> getComments() {

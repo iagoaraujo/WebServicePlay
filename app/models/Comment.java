@@ -20,9 +20,8 @@ public class Comment {
 	@NotNull
 	private String msg;
 
-	public Comment(String msg, Long sequence) {
+	public Comment(String msg) {
 		this.setMsg(msg);
-		this.id = sequence;
 	}
 	
 	public Comment() {
