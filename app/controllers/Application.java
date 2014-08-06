@@ -32,7 +32,7 @@ public class Application extends Controller {
 	public static Result getPostById(Long id) {
 	    Post post = (Post) getDao().findByEntityId(Post.class, id);
 	    if(post==null) {
-	    	return notFound("Id nao cadastrado no sistema");
+	    	return badRequest("Id nao cadastrado no sistema");
 	    }
 	    return ok(Json.toJson(post));
 	}
@@ -41,7 +41,7 @@ public class Application extends Controller {
 	public static Result editPost(Long id) {
 		Post post = (Post) getDao().findByEntityId(Post.class, id);
 		if(post==null) {
-	    	return notFound("Id nao cadastrado no sistema");
+	    	return badRequest("Id nao cadastrado no sistema");
 	    }
 		Map<String, String[]> parametros = Controller.request().body().asFormUrlEncoded();
 		String msg = parametros.get("msg")[0];
@@ -53,7 +53,7 @@ public class Application extends Controller {
 	public static Result deletePost(Long id) {
 		Post post = (Post) getDao().findByEntityId(Post.class, id);
 		if(post==null) {
-	    	return notFound("Id nao cadastrado no sistema");
+	    	return badRequest("Id nao cadastrado no sistema");
 	    }
 		getDao().remove(post);
 		getDao().flush();
@@ -68,7 +68,7 @@ public class Application extends Controller {
 	public static Result getAllComments(Long id){
 		Post post = (Post) getDao().findByEntityId(Post.class, id);
 		if(post==null){
-			return notFound("Post nao cadastrado no sistema");
+			return badRequest("Post nao cadastrado no sistema");
 		}
 		return ok(Json.toJson(post.getComments()));
 	}
@@ -77,7 +77,7 @@ public class Application extends Controller {
 	public static Result createComment(Long id){
 		Post post = (Post) getDao().findByEntityId(Post.class, id);
 		if(post==null){
-			return notFound("Post nao cadastrado no sistema");
+			return badRequest("Post nao cadastrado no sistema");
 		}
 		Map<String, String[]> parametros = Controller.request().body().asFormUrlEncoded();
 		String msg = parametros.get("msg")[0];
@@ -91,7 +91,7 @@ public class Application extends Controller {
 	public static Result getCommentById(Long id, Long id2 ){
 		Post post = (Post) getDao().findByEntityId(Post.class, id);
 		if(post==null){
-			return notFound("Post nao cadastrado no sistema");
+			return badRequest("Post nao cadastrado no sistema");
 		}
 		for(Comment comment: post.getComments()){
 			if(comment.getId().equals(id2)){
@@ -99,30 +99,38 @@ public class Application extends Controller {
 			}
 		}
 		
-		return notFound("Comment nao cadastrado no sistema");
+		return badRequest("Comment nao cadastrado no sistema");
 	}
 	
 	@Transactional
 	public static Result deleteComment(Long id, Long id2){
 		Post post = (Post) getDao().findByEntityId(Post.class, id);
+		Comment commentPost = null;
 		if(post==null){
-			return notFound("Post nao cadastrado no sistema");
+			return badRequest("Post nao cadastrado no sistema");
 		}
 		for(Comment comment: post.getComments()){
 			if(comment.getId().equals(id2)){
-				getDao().remove(comment);
-				getDao().flush();
-				return ok();
+				commentPost = comment;
 			}
 		}
-		return notFound("Comment nao cadastrado no sistema");
+		if(commentPost==null){
+			return badRequest("Comment nao cadastrado no sistema");
+		}else{
+			post.removeComment(commentPost.getId());
+			getDao().remove(commentPost);
+			getDao().merge(post);
+			getDao().flush();
+			return ok();
+		}
+		
 	}
 	
 	@Transactional
 	public static Result editComment(Long id, Long id2){
 		Post post = (Post) getDao().findByEntityId(Post.class, id);
 		if(post==null){
-			return notFound("Post nao cadastrado no sistema");
+			return badRequest("Post nao cadastrado no sistema");
 		}
 		Map<String, String[]> parametros = Controller.request().body().asFormUrlEncoded();
 		String msg = parametros.get("msg")[0];
@@ -135,7 +143,48 @@ public class Application extends Controller {
 			}
 		}
 		
-		return notFound("Comment nao cadastrado no sistema");
-		
+		return badRequest("Comment nao cadastrado no sistema");
+	}
+	
+	@Transactional
+	public static Result getHeadAllPosts() {
+		return ok(Json.toJson(head(getDao().findAllByClassName("post"))));
+	}
+	
+	@Transactional
+	public static Result getHeadFromPost(Long id) {
+		Post post = (Post) getDao().findByEntityId(Post.class, id);
+	    if(post==null) {
+	    	return badRequest("Id nao cadastrado no sistema");
+	    }
+	    return ok(Json.toJson(head(post)));
+	}
+	
+	@Transactional
+	public static Result getHeadAllCommentsFromPost(Long id) {
+		Post post = (Post) getDao().findByEntityId(Post.class, id);
+		if(post==null){
+			return badRequest("Post nao cadastrado no sistema");
+		}
+		return ok(Json.toJson(head(post.getComments())));
+	}
+	
+	@Transactional
+	public static Result getHeadFromComment(Long id, Long id2) {
+		Post post = (Post) getDao().findByEntityId(Post.class, id);
+		if(post==null){
+			return badRequest("Post nao cadastrado no sistema");
+		}
+		for(Comment comment: post.getComments()){
+			if(comment.getId().equals(id2)){
+				return ok(head(Json.toJson(comment)));
+			}
+		}
+		return badRequest("Comment nao cadastrado no sistema");
+	}
+	
+	private static String head(Object obj) {
+		return "Content-Type: application/json   Content-Length: "
+				+ obj.toString().length();
 	}
 }

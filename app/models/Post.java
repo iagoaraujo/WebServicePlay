@@ -77,17 +77,18 @@ public class Post {
 		return otherPost.getMsg().equals(this.msg);
 	}
 
-	public Comment getComment(String sequence) {
+	public Comment getComment(Long sequence) {
 		for (Comment c : this.comments) {
-			if (c.getId().toString().equals(sequence)) {
+			if (c.getId().toString().equals(sequence.toString())) {
 				return c;
 			}
 		}
 		return null;
 	}
 
-	public void removeComment(String sequence) {
-		Comment c = getComment(sequence);
+	public void removeComment(Long sequence) {
+		Comment c = new Comment();
+		c.setId(sequence);
 		comments.remove(c);
 	}
 
