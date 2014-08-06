@@ -177,7 +177,7 @@ public class Application extends Controller {
 		}
 		for(Comment comment: post.getComments()){
 			if(comment.getId().equals(id2)){
-				return ok(head(Json.toJson(comment)));
+				return ok(Json.toJson(head(comment)));
 			}
 		}
 		return badRequest("Comment nao cadastrado no sistema");
