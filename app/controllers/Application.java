@@ -13,10 +13,14 @@ import play.mvc.Result;
 
 
 public class Application extends Controller {
-
+	
 	@Transactional
 	public static Result getAllPosts() {
 		return ok(Json.toJson(getDao().findAllByClassName("post")));
+	}
+	
+	public static Result index() {
+		return ok(views.html.cadastro.render());
 	}
 	
 	@Transactional

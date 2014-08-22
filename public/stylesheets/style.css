@@ -1,0 +1,31 @@
+html {
+  background-color: gray;
+}
+
+body {
+  background-color: white;
+  color: gray;
+  margin:1em auto;
+  width:700px;
+  padding:4em;
+  border:1px solid #ffd;
+}
+
+h1 {
+  color: #005;
+}
+
+.log {
+  border:1px solid #ffd;
+  padding: 1em 1em 1em 1em;
+  margin-bottom: 1em;
+  border-radius:8px;
+  border:0px solid;
+  background-color: #f99;
+  box-shadow:3px 3px 3px #333;
+  color: black;
+}
+
+.log:hover {
+  background-color: #ecc;
+}

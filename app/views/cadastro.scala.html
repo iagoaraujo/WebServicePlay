@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Sistema de Hackfests</title>
+		<meta charset="utf-8">
+    	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    	<link rel="stylesheet" media="screen"
+		href="@routes.Assets.at("stylesheets/style.css")">
+		<script	src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"
+		type="text/javascript">
+		</script>
+		
+		<script type="text/javascript">
+
+		function getPosts() {
+
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = function()
+			{
+				if (xmlhttp.readyState==4 && xmlhttp.status==200)
+				{    
+		 	   	var parseRows = JSON.parse(xmlhttp.responseText);
+							
+				var post = '';		
+				
+				for (var i=0 ; i < parseRows.length; i++) {
+					var commentsNumber = parseRows[i].comments.length;
+					post += '<div class="log">' + "<h1>"+ parseRows[i].msg +"</h1>";
+					post += '<a href="#" onclick="getComentarios('+parseRows[i].id+')">'+commentsNumber+'</a>'; 	
+ 				    post += '<div id="comentariosDiv'+parseRows[i].id+'"></div>';
+					post += "</div>";	
+				}
+				
+		        document.getElementById("content").innerHTML=post;
+				}
+			}
+			var requestPosts = "http://localhost:9000/post";
+			xmlhttp.open("GET",requestPosts, true);
+			xmlhttp.send();
+		}
+
+
+		function getComentarios(id) {
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = function()
+			{
+				if (xmlhttp.readyState==4 && xmlhttp.status==200)
+				{    
+		 	   	var parseRows = JSON.parse(xmlhttp.responseText);
+							
+				var comment = '';
+				document.getElementById("comentariosDiv"+id).style.display = '';
+				comment += "<button onclick='hideDivComments("+id+")'>Ocultar</button>";
+				for (var i=0 ; i < parseRows.length; i++) {
+					comment += "<h2>"+ parseRows[i].msg +"</h2>";	
+				}
+				
+		        document.getElementById("comentariosDiv"+id).innerHTML=comment;
+				}
+			}
+			var requestComments = "http://localhost:9000/post/"+id+"/comment";
+			xmlhttp.open("GET",requestComments, true);
+			xmlhttp.send();
+		}
+
+		function hideDivComments(id) {
+			document.getElementById("comentariosDiv"+id).style.display = 'none';
+		}
+		
+		
+		</script>
+	</head>
+	<body>	
+		<button id="btPosts" onclick="getPosts()"> Refresh </button>
+        <div class="content" id="content"></div>
+    </body>
+    
+</html>
