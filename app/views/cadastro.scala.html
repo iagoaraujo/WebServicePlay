@@ -11,7 +11,7 @@
 		</script>
 		
 		<script type="text/javascript">
-
+		
 		function getPosts() {
 
 			var xmlhttp = new XMLHttpRequest();
@@ -25,9 +25,9 @@
 				
 				for (var i=0 ; i < parseRows.length; i++) {
 					var commentsNumber = parseRows[i].comments.length;
-					post += '<div class="log">' + "<h1>"+ parseRows[i].msg +"</h1>";
+					post += '<div class="log">' + "<h3>"+ parseRows[i].msg +"</h3>";
 					post += '<a href="#" onclick="getComentarios('+parseRows[i].id+')">'+commentsNumber+'</a>'; 	
- 				    post += '<div id="comentariosDiv'+parseRows[i].id+'"></div>';
+ 				    post += '<div class="comments" id="comentariosDiv'+parseRows[i].id+'"></div>';
 					post += "</div>";	
 				}
 				
@@ -50,9 +50,9 @@
 							
 				var comment = '';
 				document.getElementById("comentariosDiv"+id).style.display = '';
-				comment += "<button onclick='hideDivComments("+id+")'>Ocultar</button>";
+				comment += "<a href='#' onclick='hideDivComments("+id+")'>Hide</a>";
 				for (var i=0 ; i < parseRows.length; i++) {
-					comment += "<h2>"+ parseRows[i].msg +"</h2>";	
+					comment += "<h4>"+ parseRows[i].msg +"</h4>";	
 				}
 				
 		        document.getElementById("comentariosDiv"+id).innerHTML=comment;
@@ -66,8 +66,7 @@
 		function hideDivComments(id) {
 			document.getElementById("comentariosDiv"+id).style.display = 'none';
 		}
-		
-		
+
 		</script>
 	</head>
 	<body>	

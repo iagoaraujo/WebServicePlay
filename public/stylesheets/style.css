@@ -16,16 +16,22 @@ h1 {
 }
 
 .log {
-  border:1px solid #ffd;
-  padding: 1em 1em 1em 1em;
+  border-style: solid;
+  border-width: 2px;
+  border-color: black;
+  padding-top: 3px;
+  padding-left: 3px;
+  padding-bottom: 3px;
+  padding-right:3px;
   margin-bottom: 1em;
-  border-radius:8px;
-  border:0px solid;
-  background-color: #f99;
-  box-shadow:3px 3px 3px #333;
-  color: black;
+  background-color: #FFFF00;
 }
 
-.log:hover {
-  background-color: #ecc;
+.comments {
+	border:2px solid #ffd;
+	background-color: #FFFF99;
+}
+
+h2 {
+	margin-top: 1px;
 }
